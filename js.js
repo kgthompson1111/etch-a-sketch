@@ -1,42 +1,39 @@
-// HTML variables parsed into javascript
+// HTML variables parsed into javascript (body and button)
 const body = document.querySelector('body');
 const reset = document.getElementById('resetButton');
-var canvasSize = 20;
 
-//draw one container with a light grey background. height-width TBD
+// Making a variable for the size of square ("pixel size")
+var squareSize = 60;
+var countSquares;
 
-function drawContainer(containerSize) {
-    // canvas width in 20x20 units and pixels
-    var containerWidth = containerSize;
-    var containerHeight = containerSize;
-    var containerWidthPixels = containerWidth*20;
-    var containerHeightPixels = containerHeight*20;
-    // # of squares
-    canvasSize = containerWidth*containerWidth; 
-
+//draw one container with a light grey background. height-width always 960
+function drawContainer() {
+    var containerWidthPixels = 960;
+    var containerHeightPixels = 960;
     const container = document.createElement('div');
     container.id = 'container';
-    container.setAttribute('style', 'padding: 0px; display: flex; flex-wrap: wrap');
+    container.setAttribute('style', 'padding: 0px; display: flex; flex-wrap: wrap; background: blue');
     container.style.width = `${containerWidthPixels}px`;
     container.style.height = `${containerHeightPixels}px`;
     body.appendChild(container);
 }
 
-// draws a grid of specified size
+// draws a grid which changes its resolution based on size variable.
 
 function drawGrid(size) {
-
     //for loop that draws an amount of divs
-
-    for (i = 1; i <= size; i++) {
-        var newDiv = document.createElement("div");
+    squareSize = (960/size);
+    countSquares = (size*size);
+    for (i = 1; i <= countSquares; i++) {
+        var newDiv = document.createElement('div');
         newDiv.className = 'gridDiv';
-        newDiv.setAttribute('style', 'background: #f8f8ff; height: 20px; width: 20px; margin: 0px');
+        newDiv.setAttribute('style', 'background: #f8f8ff; margin: 0px');
+        newDiv.style.width = `${squareSize}px`;
+        newDiv.style.height = `${squareSize}px`;
         container.appendChild(newDiv);
     }
 
-    // add eventlistened to divs to make them change to black on mouseover
-
+    // add eventlistener to divs to make them change to black on mouseover
     const gridDivs = document.querySelectorAll('.gridDiv');
         gridDivs.forEach((div) => {
         div.addEventListener('mouseover', () => {
@@ -46,17 +43,16 @@ function drawGrid(size) {
 }
 
 
-drawContainer(canvasSize);
-drawGrid(canvasSize);
+drawContainer();
+drawGrid(60);
 
 reset.addEventListener('click', () => {
-    var newSize = parseInt(prompt("What width of container do you want m8?", ""));
-    while (newSize > 100) {
-        newSize = parseInt(prompt("Nope, under 100 squares BUD", ""));
+    var newSquareSize = parseInt(prompt("What width of container do you want m8?", ""));
+    while (newSquareSize > 100) {
+        newSquareSize = parseInt(prompt("Nope, under 100 squares BUD", ""));
     }
     const container = document.querySelector('#container');
     container.remove();
-    drawContainer(newSize);
-    var redrawNumberOfSquares = newSize*newSize;
-    drawGrid(redrawNumberOfSquares);
+    drawContainer();
+    drawGrid(newSquareSize);
 })
