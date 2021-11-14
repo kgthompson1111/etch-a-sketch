@@ -5,6 +5,16 @@ const reset = document.getElementById('resetButton');
 // Making a variable for the size of square ("pixel size")
 var squareSize = 60;
 var countSquares;
+var modeType = "rainbow";
+
+function generateRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
 
 //draw one container with a light grey background. height-width always 960
 function drawContainer() {
@@ -12,14 +22,55 @@ function drawContainer() {
     var containerHeightPixels = 960;
     const container = document.createElement('div');
     container.id = 'container';
-    container.setAttribute('style', 'padding: 0px; display: flex; flex-wrap: wrap; background: blue');
+    container.setAttribute('style', 'padding: 0px; display: flex; flex-wrap: wrap; background: white; border: solid 2px black; margin-top: 10px');
     container.style.width = `${containerWidthPixels}px`;
     container.style.height = `${containerHeightPixels}px`;
     body.appendChild(container);
 }
 
-// draws a grid which changes its resolution based on size variable.
+// rainbow event handler and event object functions
+function rainbow(e) {
+    let divOpacity = Number(e.target.style.opacity);
+    if (e.target.style.backgroundColor == "rgb(248, 248, 255)" || e.target.style.backgroundColor == "black") {
+        var randomColor = generateRandomColor();
+        e.target.style.backgroundColor = `${randomColor}`;
+        divOpacity = 1;
+    }
 
+    if(divOpacity > 0) {
+    divOpacity = (divOpacity-0.1);
+    e.target.style.opacity = divOpacity;
+    }
+}
+
+function rainbowMode() {
+    const gridDivs = document.querySelectorAll('.gridDiv');
+    gridDivs.forEach((div) => {
+    div.removeEventListener('mouseover', rainbow);
+    div.removeEventListener('mouseover', black);
+    div.addEventListener('mouseover', rainbow);
+    });
+    modeType = "rainbow";
+}
+
+// black event handler and event object functions
+function black(e) {
+    e.target.style.backgroundColor = 'black';
+    e.target.style.opacity = 1;
+}
+
+function blackMode() {
+    const gridDivs = document.querySelectorAll('.gridDiv');
+        gridDivs.forEach((div) => {
+            div.removeEventListener('mouseover', black);
+            div.removeEventListener('mouseover', rainbow);
+            div.addEventListener('mouseover', black);
+        })
+    modeType = "black";
+}
+
+
+// draws a grid which changes its resolution based on size variable.
 function drawGrid(size) {
     //for loop that draws an amount of divs
     squareSize = (960/size);
@@ -33,21 +84,21 @@ function drawGrid(size) {
         container.appendChild(newDiv);
     }
 
-    // add eventlistener to divs to make them change to black on mouseover
-    const gridDivs = document.querySelectorAll('.gridDiv');
-        gridDivs.forEach((div) => {
-        div.addEventListener('mouseover', () => {
-            div.style.backgroundColor = 'black';
-        });
-    });
+if (modeType === "rainbow") {
+    rainbowMode();
+} else if (modeType === "black") {
+    blackMode();
+}
 }
 
-
-drawContainer();
-drawGrid(60);
-
+/* add event listener to reset button to prompt user for input andchange resolution
+    returns an error if >100 or not a number */
 reset.addEventListener('click', () => {
-    var newSquareSize = parseInt(prompt("What width of container do you want m8?", ""));
+    var newSquareSize = parseInt(prompt("What pixel size do you want m8?", ""));
+    while (typeof(newSquareSize) != "number") {
+    newSquareSize = prompt("Please put a number in bud", "");
+    newSquareSize = parseInt(newSquareSize);
+    }
     while (newSquareSize > 100) {
         newSquareSize = parseInt(prompt("Nope, under 100 squares BUD", ""));
     }
@@ -56,3 +107,15 @@ reset.addEventListener('click', () => {
     drawContainer();
     drawGrid(newSquareSize);
 })
+
+// add event listener to black button, running blackmode function
+blackButton.addEventListener('click', () => {
+    blackMode();
+})
+
+rainbowButton.addEventListener('click', () => {
+    rainbowMode();
+})
+
+drawContainer();
+drawGrid(60);
