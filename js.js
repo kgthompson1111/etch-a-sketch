@@ -99,8 +99,8 @@ reset.addEventListener('click', () => {
     newSquareSize = prompt("Please put a number in bud", "");
     newSquareSize = parseInt(newSquareSize);
     }
-    while (newSquareSize > 100) {
-        newSquareSize = parseInt(prompt("Nope, under 100 squares BUD", ""));
+    while (newSquareSize > 100 || newSquareSize < 1) {
+        newSquareSize = parseInt(prompt("Invalid, please enter a number between 1-100", ""));
     }
     const container = document.querySelector('#container');
     container.remove();
